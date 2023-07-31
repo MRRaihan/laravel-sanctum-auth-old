@@ -24,15 +24,7 @@ class AuthController extends Controller
             ]);
         }
 
-        $token = $user->createToken('user-token')->plainTextToken;
-
-        // return AuthResource::make($user);
-
-        return (new AuthResource($user))
-            ->additional(['meta' => [
-                'token' => $token,
-                'token_type' => 'Bearer',
-            ]]);
+        return $this->makeToken($user);
     }
 
 
@@ -48,7 +40,12 @@ class AuthController extends Controller
         ]);
 
 
+        return $this->makeToken($user);
+    }
 
+
+    public function makeToken($user)
+    {
         $token = $user->createToken('user-token')->plainTextToken;
 
         // return AuthResource::make($user);
