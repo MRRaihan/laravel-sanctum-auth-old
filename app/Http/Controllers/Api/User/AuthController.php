@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\LoginRequest;
+use App\Http\Requests\User\RegisterRequest;
 use App\Http\Resources\User\AuthResource;
 use App\Models\User;
 use Illuminate\Validation\ValidationException;
@@ -22,6 +23,31 @@ class AuthController extends Controller
                 'phone' => ['The provided credentials are incorrect.'],
             ]);
         }
+
+        $token = $user->createToken('user-token')->plainTextToken;
+
+        // return AuthResource::make($user);
+
+        return (new AuthResource($user))
+            ->additional(['meta' => [
+                'token' => $token,
+                'token_type' => 'Bearer',
+            ]]);
+    }
+
+
+    public function register(RegisterRequest $request)
+    {
+
+        $user = User::create([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
+            'password' => bcrypt($request->input('name')),
+
+        ]);
+
+
 
         $token = $user->createToken('user-token')->plainTextToken;
 
